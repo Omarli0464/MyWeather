@@ -11,7 +11,6 @@ The user would be able to interact with the map (zoom, pan, etc),  app work in b
 ![alt tag](https://raw.githubusercontent.com/louisli1989/weatherMap/master/screenshot1.png)
 ![alt tag](https://raw.githubusercontent.com/louisli1989/weatherMap/master/screenshot2.png)
 
-
 ## API Reference
 need support Google Maps Android API v2
 target API 23
