@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements WeatherServiceLis
     protected Location mLastLocation;
     protected LocationRequest mLocationRequest;
     public static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
-
+    private Intent intent;
     /**
      * The fastest rate for active location updates. Exact. Updates will never be more frequent
      * than this value.
@@ -81,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements WeatherServiceLis
                               }
 
         );
+        intent = new Intent(this, WeatherUpdate.class);
+        startService(intent);
 
     }
     protected void createLocationRequest() {
@@ -116,6 +118,7 @@ public class MainActivity extends AppCompatActivity implements WeatherServiceLis
     @Override
     protected void onStop() {
         mGoogleApiClient.disconnect();
+        stopService(intent);
         super.onStop();
     }
     @Override
@@ -133,9 +136,14 @@ public class MainActivity extends AppCompatActivity implements WeatherServiceLis
         else{
 
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,mLocationRequest,this);
-            et.setText("Dallas");
+            //mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            LatLng mlocation=new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude());
+            WeatherService al = new WeatherService(MainActivity.this);
+            al.getWeather(mlocation);
+
+            /*et.setText("Dallas");
             WeatherServiceByName al = new WeatherServiceByName(MainActivity.this);
-            al.getWeatherByName(et.getText().toString());
+            al.getWeatherByName(et.getText().toString());*/
         }
 
     }
@@ -159,14 +167,16 @@ public class MainActivity extends AppCompatActivity implements WeatherServiceLis
 
     @Override
     public void serviceSuccess(WeatherData weatherData) {
+       UpdateUI(weatherData);
+
+    }
+    public void UpdateUI(WeatherData weatherData){
         String mDrawableName = "icon_"+weatherData.getId();
         int resID = getResources().getIdentifier(mDrawableName , "drawable", getPackageName());
         im.setImageDrawable(getResources().getDrawable(resID,null));
         t.setText(""+weatherData.getTemp());
         t2.setText(weatherData.getName());
         t3.setText(weatherData.getWeather());
-      Log.d("chengongle",weatherData.getName());
-        Log.d("success",weatherData.getWeather());
     }
 
     @Override
